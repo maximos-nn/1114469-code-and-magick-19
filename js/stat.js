@@ -50,7 +50,6 @@ function renderHeader(ctx) {
 }
 
 function renderBar(ctx, name, time, x, height) {
-  x += CLOUD_X;
   var y = CLOUD_Y + CLOUD_HEIGHT - HISTORGAM_PADDING - HISTOGRAM_FONT_SIZE;
   ctx.fillStyle = '#000000';
   ctx.fillText(name, x, y);
@@ -63,14 +62,14 @@ function renderBar(ctx, name, time, x, height) {
 }
 
 function renderData(ctx, names, times) {
-  var totalDataWidth = HISTORGAM_PADDING;
+  var dataX = CLOUD_X + HISTORGAM_PADDING;
   var maxTime = Math.floor(getMaxElement(times));
   for (var i = 0; i < names.length; i++) {
     var time = Math.floor(times[i]);
     var barWidth = getBarWidth(ctx, names[i], time);
     var barHeight = BAR_MAX_HEIGHT * time / maxTime;
-    renderBar(ctx, names[i], time, totalDataWidth, barHeight);
-    totalDataWidth += barWidth + BAR_GAP;
+    renderBar(ctx, names[i], time, dataX, barHeight);
+    dataX += barWidth + BAR_GAP;
   }
 }
 

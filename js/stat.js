@@ -16,10 +16,10 @@ var BAR_GAP = 50;
 var BAR_MARGIN = 5;
 var PLAYERS_BAR_COLOR = 'rgba(255, 0, 0, 1)';
 
-var renderSurface = function (ctx, x, y, color) {
+function renderSurface(ctx, x, y, color) {
   ctx.fillStyle = color;
   ctx.fillRect(x, y, CLOUD_WIDTH, CLOUD_HEIGHT);
-};
+}
 
 function getMaxElement(arr) {
   return Math.max.apply(null, arr);
@@ -37,6 +37,7 @@ function getBarColor(name) {
 }
 
 function renderHeader(ctx) {
+  ctx.fillStyle = '#000000';
   ctx.fillText(
       'Ура, вы победили!',
       CLOUD_X + HISTORGAM_PADDING,
@@ -76,13 +77,14 @@ function renderData(ctx, names, times) {
 function renderHistogram(ctx, names, times) {
   ctx.font = HISTOGRAM_FONT;
   ctx.textBaseline = 'top';
-  ctx.fillStyle = '#000000';
   renderHeader(ctx);
   renderData(ctx, names, times);
 }
 
-window.renderStatistics = function (ctx, names, times) {
+function renderStatistics(ctx, names, times) {
   renderSurface(ctx, SHADOW_X, SHADOW_Y, 'rgba(0, 0, 0, 0.7)');
   renderSurface(ctx, CLOUD_X, CLOUD_Y, '#ffffff');
   renderHistogram(ctx, names, times);
-};
+}
+
+window.renderStatistics = renderStatistics;

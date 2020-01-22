@@ -64,7 +64,7 @@ function renderBar(ctx, name, time, x, height) {
 
 function renderData(ctx, names, times) {
   var totalDataWidth = HISTORGAM_PADDING;
-  var maxTime = getMaxElement(times);
+  var maxTime = Math.floor(getMaxElement(times));
   for (var i = 0; i < names.length; i++) {
     var time = Math.floor(times[i]);
     var barWidth = getBarWidth(ctx, names[i], time);

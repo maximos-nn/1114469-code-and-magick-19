@@ -24,15 +24,16 @@
     '#e6e848'
   ];
   var WIZARDS_COUNT = 4;
-  var onWizardsCreated;
 
-  function onWizardsLoadSuccess(wizards) {
-    if (wizards.length <= WIZARDS_COUNT) {
-      onWizardsCreated(wizards);
-      return;
-    }
-    var randomIndex = window.utils.getRandomInt(wizards.length - WIZARDS_COUNT + 1);
-    onWizardsCreated(wizards.slice(randomIndex, randomIndex + WIZARDS_COUNT));
+  function getWizardsLoadSuccessHandler(onWizardsCreated) {
+    return function (wizards) {
+      if (wizards.length <= WIZARDS_COUNT) {
+        onWizardsCreated(wizards);
+        return;
+      }
+      var randomIndex = window.utils.getRandomInt(wizards.length - WIZARDS_COUNT + 1);
+      onWizardsCreated(wizards.slice(randomIndex, randomIndex + WIZARDS_COUNT));
+    };
   }
 
   function onWizardsLoadError(message) {
@@ -40,8 +41,7 @@
   }
 
   function createWizards(onDone) {
-    onWizardsCreated = onDone;
-    window.backend.load(onWizardsLoadSuccess, onWizardsLoadError);
+    window.backend.load(getWizardsLoadSuccessHandler(onDone), onWizardsLoadError);
   }
 
   window.wizardData = {

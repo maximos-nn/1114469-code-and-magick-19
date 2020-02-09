@@ -1,11 +1,11 @@
 'use strict';
 
 (function () {
-  var loadMethods = {XHR: 'XHR', JSONP: 'JSONP'};
-  var loadMethod = loadMethods.JSONP;
   var URL_UPLOAD = 'https://js.dump.academy/code-and-magick';
   var URL_DOWNLOAD = 'https://js.dump.academy/code-and-magick/data';
   var TIMEOUT_IN_MS = 2000;
+  var loadMethods = {XHR: 'XHR', JSONP: 'JSONP'};
+  var loadMethod = loadMethods.XHR;
   var statusCode = {OK: 200};
 
   function getRequestObject(onLoad, onError) {

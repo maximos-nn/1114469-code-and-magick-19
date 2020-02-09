@@ -1,26 +1,6 @@
 'use strict';
 
 (function () {
-  var WIZARD_NAMES = [
-    'Иван',
-    'Хуан Себастьян',
-    'Мария',
-    'Кристоф',
-    'Виктор',
-    'Юлия',
-    'Люпита',
-    'Вашингтон'
-  ];
-  var WIZARD_SURNAMES = [
-    'да Марья',
-    'Верон',
-    'Мирабелла',
-    'Вальц',
-    'Онопко',
-    'Топольницкая',
-    'Нионго',
-    'Ирвинг'
-  ];
   var COAT_COLORS = [
     'rgb(101, 137, 164)',
     'rgb(241, 43, 107)',
@@ -43,26 +23,28 @@
     '#e848d5',
     '#e6e848'
   ];
-  function getRandomName() {
-    return window.utils.getRandomElement(WIZARD_NAMES) + ' ' + window.utils.getRandomElement(WIZARD_SURNAMES);
-  }
-  function getRandomWizard() {
-    return {
-      name: getRandomName(),
-      coatColor: window.utils.getRandomElement(COAT_COLORS),
-      eyesColor: window.utils.getRandomElement(EYES_COLORS)
+  var WIZARDS_COUNT = 4;
+
+  function getWizardsLoadSuccessHandler(onWizardsCreated) {
+    return function (wizards) {
+      if (wizards.length <= WIZARDS_COUNT) {
+        onWizardsCreated(wizards);
+        return;
+      }
+      var randomIndex = window.utils.getRandomInt(wizards.length - WIZARDS_COUNT + 1);
+      onWizardsCreated(wizards.slice(randomIndex, randomIndex + WIZARDS_COUNT));
     };
   }
-  function createWizards() {
-    var wizards = [];
-    for (var i = 0; i < 4; i++) {
-      wizards[i] = getRandomWizard();
-    }
-    return wizards;
+
+  function onWizardsLoadError(message) {
+    window.utils.showTransferError(message);
   }
+
+  function createWizards(onDone) {
+    window.backend.load(getWizardsLoadSuccessHandler(onDone), onWizardsLoadError);
+  }
+
   window.wizardData = {
-    WIZARD_NAMES: WIZARD_NAMES,
-    WIZARD_SURNAMES: WIZARD_SURNAMES,
     COAT_COLORS: COAT_COLORS,
     EYES_COLORS: EYES_COLORS,
     FIREBALL_COLORS: FIREBALL_COLORS,

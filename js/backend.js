@@ -41,10 +41,10 @@
   }
 
   function loadJSONP(onLoad) {
+    window.backend.getJSONPData = getJSONPHandler(onLoad);
     var loader = document.createElement('script');
     loader.src = URL_DOWNLOAD + '?callback=backend.getJSONPData';
     document.body.append(loader);
-    window.backend.getJSONPData = getJSONPHandler(onLoad);
   }
 
   function save(data, onLoad, onError) {

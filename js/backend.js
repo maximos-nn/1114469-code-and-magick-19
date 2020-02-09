@@ -2,7 +2,7 @@
 
 (function () {
   var loadMethods = {XHR: 'XHR', JSONP: 'JSONP'};
-  var loadMethod = loadMethods.XHR;
+  var loadMethod = loadMethods.JSONP;
   var URL_UPLOAD = 'https://js.dump.academy/code-and-magick';
   var URL_DOWNLOAD = 'https://js.dump.academy/code-and-magick/data';
   var TIMEOUT_IN_MS = 2000;
@@ -34,16 +34,24 @@
     xhr.send();
   }
 
-  function getJSONPHandler(onLoad) {
-    return function (data) {
+  function loadJSONP(onLoad, onError) {
+    var isScriptOk = false;
+    window.backend.getJSONPData = function (data) {
+      isScriptOk = true;
+      delete window.backend.getJSONPData;
       onLoad(data);
     };
-  }
-
-  function loadJSONP(onLoad) {
-    window.backend.getJSONPData = getJSONPHandler(onLoad);
+    function checkJSONPHandler() {
+      if (isScriptOk) {
+        return;
+      }
+      delete window.backend.getJSONPData;
+      onError('Ошибка загрузки данных с сервера');
+    }
     var loader = document.createElement('script');
     loader.src = URL_DOWNLOAD + '?callback=backend.getJSONPData';
+    loader.onload = checkJSONPHandler;
+    loader.onerror = checkJSONPHandler;
     document.body.append(loader);
   }
 
@@ -59,7 +67,7 @@
         loadXHR(onLoad, onError);
         break;
       case loadMethods.JSONP:
-        loadJSONP(onLoad);
+        loadJSONP(onLoad, onError);
         break;
       default:
         throw new Error('Неизвестный метод загрузки данных: "' + loadMethod + '"');

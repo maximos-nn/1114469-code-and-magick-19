@@ -1,6 +1,9 @@
 'use strict';
 
 (function () {
+  var setupDialog;
+  var similarList;
+
   function renderWizard(wizard) {
     var wizardTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
     var wizardElement = wizardTemplate.cloneNode(true);
@@ -9,16 +12,47 @@
     wizardElement.querySelector('.wizard-eyes').style.fill = wizard.colorEyes;
     return wizardElement;
   }
-  function renderSimilarWizards(dialog) {
-    window.wizardData.createWizards(function (similarWizards) {
-      var fragment = document.createDocumentFragment();
-      for (var i = 0; i < similarWizards.length; i++) {
-        fragment.appendChild(renderWizard(similarWizards[i]));
-      }
-      var similar = dialog.querySelector('.setup-similar');
-      similar.querySelector('.setup-similar-list').appendChild(fragment);
-      similar.classList.remove('hidden');
+
+  function renderSimilarWizards(similarWizards) {
+    var fragment = document.createDocumentFragment();
+    similarWizards.forEach(function (wizard) {
+      fragment.appendChild(renderWizard(wizard));
     });
+    similarList.appendChild(fragment);
   }
-  window.wizardRenderSimilar = renderSimilarWizards;
+
+  function renderLoadedWizards(wizards) {
+    var similar = setupDialog.querySelector('.setup-similar');
+    similarList = similar.querySelector('.setup-similar-list');
+    similar.classList.remove('hidden');
+    renderSimilarWizards(wizards);
+  }
+
+  function updateSimilarWizards() {
+    similarList.innerHTML = '';
+    renderSimilarWizards(window.wizardData.getWizards());
+  }
+
+  function onWizardCoatChange(color) {
+    window.wizardData.setSortParams(color, window.wizardAppearance.getWizardEyesColor());
+    updateSimilarWizards();
+  }
+
+  function onWizardEyesChange(color) {
+    window.wizardData.setSortParams(window.wizardAppearance.getWizardCoatColor(), color);
+    updateSimilarWizards();
+  }
+
+  function showSimilarWizards(dialog) {
+    setupDialog = dialog;
+    window.wizardAppearance.setWizardCoatChangeCb(window.utils.debounce(onWizardCoatChange));
+    window.wizardAppearance.setWizardEyesChangeCb(window.utils.debounce(onWizardEyesChange));
+    window.wizardData.setSortParams(
+        window.wizardAppearance.getWizardCoatColor(),
+        window.wizardAppearance.getWizardEyesColor()
+    );
+    window.wizardData.createWizards(renderLoadedWizards);
+  }
+
+  window.wizardRenderSimilar = showSimilarWizards;
 })();

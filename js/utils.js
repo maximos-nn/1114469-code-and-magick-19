@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var DEBOUNCE_INTERVAL = 500;
+
   function getRandomInt(max) {
     return Math.floor(Math.random() * max);
   }
@@ -21,9 +23,23 @@
     document.body.insertAdjacentElement('afterbegin', node);
   }
 
+  function debounce(cb) {
+    var lastTimeout = null;
+    return function () {
+      var parameters = arguments;
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+      lastTimeout = window.setTimeout(function () {
+        cb.apply(null, parameters);
+      }, DEBOUNCE_INTERVAL);
+    };
+  }
+
   window.utils = {
     getRandomInt: getRandomInt,
     getRandomElement: getRandomElement,
-    showTransferError: showTransferError
+    showTransferError: showTransferError,
+    debounce: debounce
   };
 })();

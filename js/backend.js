@@ -4,16 +4,16 @@
   var URL_UPLOAD = 'https://js.dump.academy/code-and-magick';
   var URL_DOWNLOAD = 'https://js.dump.academy/code-and-magick/data';
   var TIMEOUT_IN_MS = 2000;
-  var loadMethods = {XHR: 'XHR', JSONP: 'JSONP'};
-  var loadMethod = loadMethods.XHR;
-  var statusCode = {OK: 200};
+  var LoadMethod = {XHR: 'XHR', JSONP: 'JSONP'};
+  var currentLoadMethod = LoadMethod.XHR;
+  var StatusCode = {OK: 200};
 
   function getRequestObject(onLoad, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
     xhr.timeout = TIMEOUT_IN_MS;
     xhr.addEventListener('load', function () {
-      if (xhr.status === statusCode.OK) {
+      if (xhr.status === StatusCode.OK) {
         onLoad(xhr.response);
       } else {
         onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
@@ -62,15 +62,15 @@
   }
 
   function load(onLoad, onError) {
-    switch (loadMethod) {
-      case loadMethods.XHR:
+    switch (currentLoadMethod) {
+      case LoadMethod.XHR:
         loadXHR(onLoad, onError);
         break;
-      case loadMethods.JSONP:
+      case LoadMethod.JSONP:
         loadJSONP(onLoad, onError);
         break;
       default:
-        throw new Error('Неизвестный метод загрузки данных: "' + loadMethod + '"');
+        throw new Error('Неизвестный метод загрузки данных: "' + currentLoadMethod + '"');
     }
   }
 

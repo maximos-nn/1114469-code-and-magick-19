@@ -24,15 +24,46 @@
     '#e6e848'
   ];
   var WIZARDS_COUNT = 4;
+  var wizards;
+  var sortParams = {};
+
+  function getWizardRank(wizard) {
+    var rank = 0;
+    if (wizard.colorCoat === sortParams.wizardCoatColor) {
+      rank += 2;
+    }
+    if (wizard.colorEyes === sortParams.wizardEyesColor) {
+      rank += 1;
+    }
+    return rank;
+  }
+
+  function namesComparator(left, right) {
+    if (left > right) {
+      return 1;
+    } else if (left < right) {
+      return -1;
+    } else {
+      return 0;
+    }
+  }
+
+  function sortCallback(left, right) {
+    var rankDiff = getWizardRank(right) - getWizardRank(left);
+    if (rankDiff === 0) {
+      rankDiff = namesComparator(left.name, right.name);
+    }
+    return rankDiff;
+  }
+
+  function getWizards() {
+    return wizards.slice().sort(sortCallback).slice(0, WIZARDS_COUNT);
+  }
 
   function getWizardsLoadSuccessHandler(onWizardsCreated) {
-    return function (wizards) {
-      if (wizards.length <= WIZARDS_COUNT) {
-        onWizardsCreated(wizards);
-        return;
-      }
-      var randomIndex = window.utils.getRandomInt(wizards.length - WIZARDS_COUNT + 1);
-      onWizardsCreated(wizards.slice(randomIndex, randomIndex + WIZARDS_COUNT));
+    return function (loadedWizards) {
+      wizards = loadedWizards;
+      onWizardsCreated(getWizards());
     };
   }
 
@@ -44,10 +75,17 @@
     window.backend.load(getWizardsLoadSuccessHandler(onDone), onWizardsLoadError);
   }
 
+  function setSortParams(wizardCoatColor, wizardEyesColor) {
+    sortParams.wizardCoatColor = wizardCoatColor;
+    sortParams.wizardEyesColor = wizardEyesColor;
+  }
+
   window.wizardData = {
     COAT_COLORS: COAT_COLORS,
     EYES_COLORS: EYES_COLORS,
     FIREBALL_COLORS: FIREBALL_COLORS,
-    createWizards: createWizards
+    createWizards: createWizards,
+    setSortParams: setSortParams,
+    getWizards: getWizards
   };
 })();

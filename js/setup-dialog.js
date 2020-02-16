@@ -61,7 +61,7 @@
 
   dialogForm.addEventListener('submit', onFormSubmit);
 
+  window.wizardAppearance.setAppearance(dialog);
   window.wizardRenderSimilar(dialog);
-  window.wizardSetAppearance(dialog);
   window.dialogSetDragHandler(dialog);
 })();
